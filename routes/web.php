@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/atm', 'AtmController@index');
+
+Route::post('/atm/withdraw', 'AtmController@withdraw')->name('withdraw');
+
