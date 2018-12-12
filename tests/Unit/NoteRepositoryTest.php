@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery as m;
 use App\Repos\NoteRepository;
 use App\Note;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @coversDefaultClass \App\Repos\NoteRepository
@@ -56,5 +57,59 @@ class NoteRepositoryTest extends TestCase
         $amount = $this->noteRepo->findAmount($note);
 
         $this->assertEquals($note->amount, $amount);
+    }
+
+    /**
+     * @test
+     * @covers ::getDeductNotes
+     * @dataProvider correctNotesData
+     *
+     * @param $notes
+     * @param $withdrawAmount
+     * @param $expectedNotes
+     */
+    public function it_should_return_correct_notes($notes, $withdrawAmount, $expectedNotes)
+    {
+        $this->note
+            ->shouldReceive('orderBy')
+            ->with('value', 'desc')
+            ->andReturnSelf()
+            ->shouldReceive('get')
+            ->andReturn($notes);
+
+        $return = $this->noteRepo->getDeductNotes($withdrawAmount);
+
+        $this->assertEquals($expectedNotes, $return);
+    }
+
+    /**
+     * @return array
+     */
+    public function correctNotesData()
+    {
+        $notes1 = new Collection([
+            new Note(['value' => 1000, 'amount' => 0]),
+            new Note(['value' => 500, 'amount' => 2]),
+            new Note(['value' => 50, 'amount' => 100]),
+        ]);
+        $notes2 = new Collection([
+            new Note(['value' => 50, 'amount' => 2]),
+            new Note(['value' => 20, 'amount' => 100]),
+        ]);
+
+        $expectedNote1 = [
+            ['id' => null, 'note' => 500, 'deduct' => 2],
+            ['id' => null, 'note' => 50, 'deduct' => 10],
+        ];
+
+        $expectedNote2 = [
+            ['id' => null, 'note' => 50, 'deduct' => 2],
+            ['id' => null, 'note' => 20, 'deduct' => 10],
+        ];
+
+        return [
+            [$notes1, 1500, $expectedNote1],
+            [$notes2, 300, $expectedNote2],
+        ];
     }
 }

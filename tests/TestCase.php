@@ -11,7 +11,7 @@ use App\Note;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, DatabaseMigrations, DatabaseTransactions;
+    use CreatesApplication;
 
     protected $faker;
 
@@ -24,27 +24,5 @@ abstract class TestCase extends BaseTestCase
 
         $this->faker = Faker::create();
 
-        factory(Note::class)->create([
-            'value' => 20,
-            'color' => 'green'
-        ]);
-
-        factory(Note::class)->create([
-            'name' => 'pending',
-            'color' => 'yellow'
-        ]);
-    }
-
-    protected function mockInstance(string $class)
-    {
-        $this->app->instance($class, m::mock($class));
-
-        return $this->app->make($class);
-    }
-
-    public function tearDown()
-    {
-        $this->artisan('migrate:reset');
-        parent::tearDown();
     }
 }
