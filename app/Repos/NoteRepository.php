@@ -64,14 +64,18 @@ class NoteRepository
             $result[] = ['id' => $note->id, 'note' => $note->value, 'deduct' => (int)$actualUse];
         }
 
+        if ($withdrawAmount > 0) {
+            return [];
+        }
+
         return  $result;
     }
 
     /**
      * @param int $withdrawAmount
-     * @return bool
+     * @return array|bool
      */
-    public function withdraw(int $withdrawAmount): bool
+    public function withdraw(int $withdrawAmount)
     {
         $list = $this->getDeductNotes($withdrawAmount);
 
@@ -85,6 +89,6 @@ class NoteRepository
                 ->decrement('amount', $note['deduct']);
         }
 
-        return true;
+        return $list;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repos\NoteRepository;
+use Illuminate\Support\Facades\Validator;
 
 class AtmController extends Controller
 {
@@ -19,5 +20,34 @@ class AtmController extends Controller
         $notes = $this->noteRepo->listAllNotes();
 
         return view('atm', ['notes' => $notes]);
+    }
+
+    function withdraw(Request $request)
+    {
+        /**
+         * Validate request
+         */
+        $validator = Validator::make($request->all(), [
+            'withdrawAmount' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/')
+                ->withErrors($validator);
+        }
+
+        /**
+         * Get post withdraw amount
+         */
+        $withdrawAmount = $request->input('withdrawAmount');
+
+        $result = $this->noteRepo->withdraw($withdrawAmount);
+
+        if ($result === false) {
+            return redirect('/')
+                ->withErrors(["Insufficient Notes For $withdrawAmount THB"]);
+        }
+
+        return redirect('/')->with('notesList', $result);
     }
 }

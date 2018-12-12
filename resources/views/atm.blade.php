@@ -68,8 +68,38 @@
 
     <div class="container">
         <h1>ATM</h1>
-        <form action="/foo/bar" method="{{ route('withdraw') }}">
+        @if ($errors->any())
+            <h3>Errors</h3>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li class="validation-error-item">{{ $error }}</li>
+                @endforeach
+            </ul>
+        @endif
 
+        <h3>Available Notes</h3>
+        <ul>
+            @foreach ($notes as $note)
+                <li>{{ $note->value }} THB: {{ $note->amount }}</li>
+            @endforeach
+        </ul>
+
+        @if (session('notesList'))
+            <h3>Deducted Notes</h3>
+            <ul>
+                @foreach (session('notesList') as $note)
+                    <li>{{ $note['note'] }} THB: {{$note['deduct']}}</li>
+                @endforeach
+            </ul>
+        @endif
+
+        <form action="{{ route('withdraw') }}" method="post">
+            @csrf
+            <div class="form-group">
+                <label for="exampleInputEmail1">Withdraw Amount</label>
+                <input type="number" class="form-control" id="withdrawAmount" name="withdrawAmount">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 
