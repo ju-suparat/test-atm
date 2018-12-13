@@ -10,11 +10,19 @@ class AtmController extends Controller
 {
     protected $noteRepo;
 
+    /**
+     * AtmController constructor.
+     *
+     * @param NoteRepository $noteRepo
+     */
     function __construct(NoteRepository $noteRepo)
     {
         $this->noteRepo = $noteRepo;
     }
 
+    /**
+     * @return mixed
+     */
     function index()
     {
         $notes = $this->noteRepo->listAllNotes();
@@ -22,6 +30,11 @@ class AtmController extends Controller
         return view('atm', ['notes' => $notes]);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return mixed
+     */
     function withdraw(Request $request)
     {
         /**
