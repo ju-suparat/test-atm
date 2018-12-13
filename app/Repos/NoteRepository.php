@@ -6,6 +6,11 @@ use App\Note;
 
 class NoteRepository
 {
+    /**
+     * NoteRepository constructor.
+     *
+     * @param Note $note
+     */
     public function __construct(Note $note)
     {
         $this->model = $note;
@@ -40,7 +45,11 @@ class NoteRepository
     }
 
     /**
+     * Return list of notes that can be deducted with given withdraw amount
+     * empty array will be returned in case any notes cannot be deducted
+     *
      * @param int $withdrawAmount
+     *
      * @return array
      */
     public function getDeductNotes(int $withdrawAmount): array
@@ -72,6 +81,8 @@ class NoteRepository
     }
 
     /**
+     * Decrement note amount by given notes list with amount to be decreased.
+     *
      * @param int $withdrawAmount
      * @return array|bool
      */
